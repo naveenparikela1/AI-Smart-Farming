@@ -52,7 +52,25 @@ a { color:var(--lime)!important; }
 .hero-panel p { color:#c1d2c6; margin-bottom:0; }
 .section-kicker { color:#b7ef68; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
 .insight-panel { padding:18px 20px; border-radius:16px; border:1px solid #365342; background:#14271e; min-height:120px; }
+
 .insight-panel strong { color:#c4f27b; }
+.landing-shell { max-width:1240px; margin:0 auto; }
+.landing-nav { display:flex; align-items:center; justify-content:space-between; padding:8px 0 24px; }
+.landing-hero { min-height:490px; display:flex; flex-direction:column; justify-content:center; padding:58px 6%; border:1px solid #46624d; border-radius:28px; overflow:hidden; background-image:linear-gradient(90deg,rgba(5,18,12,.94) 0%,rgba(5,18,12,.76) 48%,rgba(5,18,12,.12) 100%),url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1800&q=85'); background-position:center; background-size:cover; box-shadow:0 25px 70px #0005; }
+.landing-hero h1 { max-width:690px; font-size:clamp(2.6rem,5.5vw,4.7rem)!important; line-height:1.06!important; margin:18px 0!important; }
+.landing-hero p { max-width:560px; color:#e0eadf; font-size:1.08rem; line-height:1.7; }
+.landing-kicker { color:#c4f27b; text-transform:uppercase; letter-spacing:2.5px; font-size:.76rem; font-weight:800; }
+.landing-feature { overflow:hidden; border:1px solid #2b4537; border-radius:18px; background:linear-gradient(145deg,#14271e,#0d1a14); min-height:275px; }
+.landing-feature img { width:100%; height:145px; object-fit:cover; display:block; }
+.landing-feature-copy { padding:17px 18px 20px; }
+.landing-feature-copy h3 { margin:0 0 7px; }
+.landing-feature-copy p { font-size:.9rem; line-height:1.55; margin:0; }
+.landing-stat { border:1px solid #2b4537; border-radius:16px; padding:20px; background:#112119; }
+.landing-stat strong { color:#c4f27b; font-size:1.25rem; display:block; }
+.landing-cta { text-align:center; padding:42px 20px; border:1px solid #355242; border-radius:22px; background:linear-gradient(120deg,#1b3928,#102018); }
+.landing-footer { text-align:center; color:#8fa397; padding:28px 0 10px; font-size:.82rem; }
+@media(max-width:700px) { .landing-hero{min-height:440px;padding:32px 24px;background-position:58% center;} .landing-hero h1{font-size:2.5rem!important;} }
+
 @media(max-width:700px) { .block-container{padding:1rem!important;} h1{font-size:1.7rem!important;} .hero-panel{padding:20px;} }
 </style>
 """, unsafe_allow_html=True)
@@ -163,6 +181,64 @@ def show_table(rows, columns=None):
         st.dataframe(df, use_container_width=True, hide_index=True)
     else:
         st.info(tr("no_data"))
+
+def landing_page():
+    """Public marketing page shown before authentication."""
+    st.markdown("<div class='landing-shell'>", unsafe_allow_html=True)
+    nav1, nav2, nav3 = st.columns([5,1,1])
+    with nav1:
+        st.markdown("<div class='brand-pill'>🌱 SMARTFARM AI</div>", unsafe_allow_html=True)
+    with nav2:
+        if st.button("Log in", key="landing_login", use_container_width=True):
+            st.session_state.auth_mode = "login"
+            st.session_state.show_auth = True
+            st.rerun()
+    with nav3:
+        if st.button("Get started", key="landing_register", use_container_width=True):
+            st.session_state.auth_mode = "register"
+            st.session_state.show_auth = True
+            st.rerun()
+
+    st.markdown("""
+    <section class='landing-hero'>
+      <div class='landing-kicker'>A smarter way to manage every acre</div>
+      <h1>Grow better.<br>Manage smarter.</h1>
+      <p>Bring your farm records, crop cycles, expenses, harvests and daily activities together in one simple workspace.</p>
+    </section>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height:34px'></div><div class='landing-kicker'>YOUR FARM, ONE WORKSPACE</div>", unsafe_allow_html=True)
+    st.markdown("## Everything your farm needs, in one place")
+    st.markdown("From the first planting record to harvest and sales, keep the important details organised.")
+    feature_data = [
+        ("https://images.unsplash.com/photo-1499529112087-3cb3b73 ಕಾಣ?auto=format&fit=crop&w=900&q=80", "Farm management", "Organise farm profiles, land area, soil types and irrigation details."),
+        ("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80", "Crop tracking", "Track crop cycles, varieties, planting dates and growth stages."),
+        ("https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=900&q=80", "Harvest & sales", "Record harvest quantities, buyers, market prices and selling costs."),
+    ]
+    cols = st.columns(3)
+    for col, (src, title, desc) in zip(cols, feature_data):
+        with col:
+            st.markdown(f"<div class='landing-feature'><img src='{src}' alt='{title}'><div class='landing-feature-copy'><h3>{title}</h3><p>{desc}</p></div></div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+    more = st.columns(3)
+    extras = [
+        ("📊", "Understand your finances", "See recorded expenses, sales revenue and estimated profit."),
+        ("🗓️", "Stay on schedule", "Create reminders for irrigation, soil tests and field inspections."),
+        ("🌐", "Your language, your way", "Use the workspace in English or Telugu."),
+    ]
+    for col, (ico, title, desc) in zip(more, extras):
+        with col:
+            st.markdown(f"<div class='landing-stat'><strong>{ico} {title}</strong><p>{desc}</p></div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='height:34px'></div><div class='landing-cta'><div class='landing-kicker'>READY TO GET ORGANISED?</div><h2>Make every farm decision easier.</h2><p>Start building a clear record of your farm, one activity at a time.</p></div>", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns([1,2,1])
+    with c2:
+        if st.button("Create your free account →", key="landing_bottom_register", use_container_width=True):
+            st.session_state.auth_mode = "register"
+            st.session_state.show_auth = True
+            st.rerun()
+    st.markdown("<div class='landing-footer'>🌱 SMARTFARM AI · Practical tools for better farm management</div></div>", unsafe_allow_html=True)
 
 def login_screen():
     st.markdown("<div class='login-wrap'>", unsafe_allow_html=True)
@@ -471,7 +547,15 @@ def settings_page(uid):
 def main():
     if "user_id" not in st.session_state:
         st.session_state.setdefault("language","English")
-        login_screen()
+        if st.session_state.get("show_auth", False):
+            c1, c2 = st.columns([5,1])
+            with c2:
+                if st.button("← Back to home", use_container_width=True):
+                    st.session_state.show_auth = False
+                    st.rerun()
+            login_screen()
+        else:
+            landing_page()
         return
     user=get_user(st.session_state.user_id)
     if not user:
