@@ -14,73 +14,48 @@ st.set_page_config(page_title="SmartFarm | Smart Farming Dashboard", page_icon="
 init_db()
 
 # AI SMART FARMING THEME
-
 st.markdown("""
 <style>
-.stApp {
-    background: radial-gradient(ellipse at top right, #132b36 0%, #07111f 48%, #050b14 100%);
-    color: #eaf2f8;
-}
-header[data-testid="stHeader"] {
-    background: rgba(7,17,31,0.85);
-}
-section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #101f32, #07111f);
-    border-right: 1px solid #263b4d;
-}
-section[data-testid="stSidebar"] * {
-    color: #eaf2f8;
-}
-h1, h2, h3 {
-    color: #eaf2f8 !important;
-    letter-spacing: -0.5px;
-}
-.stMetric {
-    background: linear-gradient(145deg, #14283a, #0c1928);
-    border: 1px solid #294456;
-    border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.20);
-}
-[data-testid="stMetricValue"] {
-    color: #a3ff12;
-    font-weight: 700;
-}
-[data-testid="stMetricLabel"] {
-    color: #a9bdca;
-}
-.stButton > button, .stFormSubmitButton > button {
-    background: linear-gradient(90deg, #a3ff12, #72d600);
-    color: #07111f;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    min-height: 42px;
-}
-.stButton > button:hover, .stFormSubmitButton > button:hover {
-    background: #c0ff55;
-    color: #07111f;
-    border: none;
-}
-input, textarea, [data-baseweb="select"] > div {
-    background-color: #102235 !important;
-    border-color: #345064 !important;
-    border-radius: 9px !important;
-}
-div[data-testid="stDataFrame"] {
-    border: 1px solid #294456;
-    border-radius: 12px;
-    overflow: hidden;
-}
-div[data-testid="stAlert"] {
-    border-radius: 12px;
-}
-hr {
-    border-color: #294456;
-}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+:root { --bg:#08120f; --panel:#101e19; --panel2:#14251e; --line:#263b31; --muted:#9aada2; --text:#edf5ef; --lime:#b7ef68; --green:#4ca878; }
+html, body, [class*="css"] { font-family:'DM Sans',sans-serif; }
+.stApp { background:radial-gradient(ellipse at 82% 0%,#173528 0%,#0b1712 38%,#07100d 100%); color:var(--text); }
+header[data-testid="stHeader"] { background:rgba(7,16,13,.78); }
+.block-container { max-width:1440px; padding-top:2rem; padding-bottom:3rem; }
+section[data-testid="stSidebar"] { background:linear-gradient(180deg,#10221a 0%,#09130f 100%); border-right:1px solid #263b31; }
+section[data-testid="stSidebar"] > div { padding-top:1.4rem; }
+section[data-testid="stSidebar"] * { color:var(--text); }
+h1,h2,h3 { color:var(--text)!important; font-family:'Manrope',sans-serif!important; letter-spacing:-.7px; }
+h1 { font-size:2.1rem!important; font-weight:800!important; }
+h2 { font-size:1.45rem!important; font-weight:700!important; }
+h3 { font-size:1.08rem!important; font-weight:700!important; }
+p, .stCaption { color:var(--muted); }
+div[data-testid="stMetric"] { background:linear-gradient(145deg,#172a21,#102018); border:1px solid #2b4537; border-radius:18px; padding:18px 20px; box-shadow:0 12px 30px #0002; min-height:118px; }
+[data-testid="stMetricLabel"] { color:#a9bdb0!important; font-size:.83rem!important; }
+[data-testid="stMetricValue"] { color:var(--lime)!important; font-family:'Manrope',sans-serif!important; font-weight:800!important; }
+[data-testid="stMetricDelta"] { font-size:.75rem!important; }
+.stButton > button, .stFormSubmitButton > button { background:linear-gradient(135deg,#c4f27b,#8bd45a); color:#102016; border:0; border-radius:11px; min-height:42px; font-weight:700; transition:all .2s ease; }
+.stButton > button:hover, .stFormSubmitButton > button:hover { background:#d6ff9c; color:#102016; border:0; transform:translateY(-1px); }
+.stButton > button[kind="secondary"] { background:#1b3026; color:#dce9df; border:1px solid #385442; }
+input,textarea,[data-baseweb="select"] > div { background-color:#13251d!important; border-color:#355242!important; border-radius:10px!important; color:var(--text)!important; }
+[data-testid="stDataFrame"],[data-testid="stTable"] { border:1px solid #2b4537; border-radius:14px; overflow:hidden; }
+[data-testid="stExpander"] { background:#112119; border:1px solid #2b4537; border-radius:14px; }
+div[data-testid="stAlert"] { border-radius:13px; }
+hr { border-color:#2b4537; }
+div[data-testid="stVerticalBlockBorderWrapper"] > div { border-color:#2b4537!important; border-radius:16px!important; background:rgba(17,33,25,.72); }
+div[data-testid="stRadio"] label { background:transparent; border-radius:9px; }
+.stProgress > div > div > div > div { background:var(--lime); }
+a { color:var(--lime)!important; }
+.login-wrap { max-width:480px; margin:5vh auto; padding:2.2rem; border:1px solid #2b4537; border-radius:24px; background:linear-gradient(145deg,#14271e,#0d1a14); box-shadow:0 24px 80px #0005; }
+.brand-pill { display:inline-block; padding:7px 12px; border:1px solid #42634d; border-radius:999px; color:#c4f27b; background:#1b3324; font-size:12px; letter-spacing:1.5px; font-weight:700; }
+.hero-panel { padding:26px 28px; border:1px solid #355242; border-radius:22px; background:linear-gradient(120deg,rgba(40,81,55,.85),rgba(16,34,25,.92)); margin:8px 0 22px 0; }
+.hero-panel p { color:#c1d2c6; margin-bottom:0; }
+.section-kicker { color:#b7ef68; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
+.insight-panel { padding:18px 20px; border-radius:16px; border:1px solid #365342; background:#14271e; min-height:120px; }
+.insight-panel strong { color:#c4f27b; }
+@media(max-width:700px) { .block-container{padding:1rem!important;} h1{font-size:1.7rem!important;} .hero-panel{padding:20px;} }
 </style>
 """, unsafe_allow_html=True)
-
 
 TEXT = {
     "English": {
@@ -191,15 +166,16 @@ def show_table(rows, columns=None):
 
 def login_screen():
     st.markdown("<div class='login-wrap'>", unsafe_allow_html=True)
-    st.title("🌱 SmartFarm")
-    st.caption("Smart Farming Dashboard")
+    st.markdown("<div class='brand-pill'>🌱 SMARTFARM INTELLIGENCE</div>", unsafe_allow_html=True)
+    st.title("Grow smarter. Farm better.")
+    st.caption("Your farm operations, insights and records in one place.")
     st.session_state.setdefault("auth_mode", "login")
     mode = st.radio("Account", ["login", "register"], horizontal=True,
                     format_func=lambda x: tr("login") if x == "login" else tr("register"),
                     index=0 if st.session_state.auth_mode == "login" else 1)
     st.session_state.auth_mode = mode
     with st.form("auth_form"):
-        name = st.text_input(tr("name")) if mode == "register" else ""
+        name = st.text_input(tr("name"), placeholder="Your name") if mode == "register" else ""
         phone = st.text_input(tr("phone"), placeholder="10-digit phone number")
         password = st.text_input(tr("password"), type="password")
         submitted = st.form_submit_button(tr("register") if mode == "register" else tr("login"), use_container_width=True)
@@ -234,39 +210,73 @@ def crop_options(user_id):
     return list_crops(user_id)
 
 def dashboard(user_id):
-    st.title(f"🌱 {tr('dashboard')}")
-    st.subheader(f"{tr('welcome')} {st.session_state.user_name}")
-    st.caption(tr("sample"))
     totals = dashboard_totals(user_id)
+    farms = list_farms(user_id)
+    crops = list_crops(user_id)
+    expenses = list_expenses(user_id)
+    reminders = list_reminders(user_id)
+    st.markdown("<div class='section-kicker'>FARM OVERVIEW · LIVE WORKSPACE</div>", unsafe_allow_html=True)
+    st.title(f"Good to see you, {st.session_state.user_name} 👋")
+    st.markdown("<div class='hero-panel'><div class='section-kicker'>SMART FARMING CONTROL CENTRE</div><h2 style='margin:.45rem 0 .3rem 0'>A clearer view of every acre.</h2><p>Track operations, understand performance and keep your next farm activity on schedule.</p></div>", unsafe_allow_html=True)
+
     cards = [
-        (tr("area"), f"{totals['area']:.2f} acres"),
+        (tr("area"), f"{totals['area']:.2f} ac"),
         (tr("active"), str(totals["active_crops"])),
         (tr("expense"), money(totals["expenses"])),
-        (tr("harvested"), f"{totals['harvest_kg']:,.1f} kg"),
         (tr("revenue"), money(totals["revenue"])),
-        (tr("costs"), money(totals["selling_costs"])),
+        (tr("harvested"), f"{totals['harvest_kg']:,.1f} kg"),
         (tr("profit"), money(totals["profit"])),
         (tr("reminders"), str(totals["pending_reminders"])),
+        ("Farms registered", str(len(farms))),
     ]
     cols = st.columns(4)
     for i, (label, value) in enumerate(cards):
         with cols[i % 4]:
             st.metric(label, value)
-    st.info(tr("profit_note"))
-    c1, c2 = st.columns(2)
-    with c1:
-        st.subheader("Expense breakdown")
-        exp = list_expenses(user_id)
-        if exp:
-            df = pd.DataFrame(exp)
-            chart = df.groupby("category", as_index=False)["amount"].sum()
-            st.bar_chart(chart.set_index("category"))
+
+    st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+    left, right = st.columns([1.35, 1])
+    with left:
+        st.subheader("📊 Financial performance")
+        if expenses:
+            df = pd.DataFrame(expenses)
+            chart = df.groupby("category", as_index=False)["amount"].sum().sort_values("amount", ascending=False)
+            st.bar_chart(chart.set_index("category"), color="#9bd96b")
         else:
-            st.info(tr("no_data"))
+            st.info("Your expense chart will appear once you record farm spending.")
+    with right:
+        st.subheader("🌿 Crop portfolio")
+        if crops:
+            for crop in crops[:5]:
+                st.markdown(f"**{crop['crop']} · {crop['variety']}**")
+                st.caption(f"{crop['farm_name']} · {tr('stage_'+crop['stage'])}")
+                st.progress({"vegetative":25,"flowering":50,"fruiting":75,"harvest":100}.get(crop["stage"],10))
+        else:
+            st.info("Add your first crop cycle to start tracking crop progress.")
+
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+    c1, c2 = st.columns([1,1])
+    with c1:
+        st.subheader("⏰ Upcoming reminders")
+        pending = [r for r in reminders if not r["is_done"]]
+        if pending:
+            for item in pending[:5]:
+                with st.container(border=True):
+                    st.markdown(f"**{item['title']}**")
+                    st.caption(f"{item['category'].replace('_',' ').title()} · Due {item['due_date']}")
+        else:
+            st.info("No pending reminders. You're up to date.")
     with c2:
-        st.subheader("Recent reminders")
-        rem = list_reminders(user_id)
-        show_table(rem[:6], ["title", "due_date", "status"] if rem else None)
+        st.subheader("🚜 Your farms")
+        if farms:
+            for farm in farms[:4]:
+                with st.container(border=True):
+                    st.markdown(f"**{farm['name']}**")
+                    st.caption(f"{farm['village'] or 'Location not added'} · {farm['area']:.2f} acres · {farm['soil'].title()} soil")
+        else:
+            st.info("Create a farm profile to organise your land and crop cycles.")
+
+    st.caption(tr("profit_note"))
 
 def farms_page(uid):
     st.title(f"🚜 {tr('farms')}")
@@ -464,20 +474,30 @@ def main():
         login_screen()
         return
     user=get_user(st.session_state.user_id)
+    if not user:
+        st.session_state.pop("user_id",None)
+        st.rerun()
     st.session_state.language=user["language"]
     with st.sidebar:
-        st.markdown("# 🌱 SmartFarm")
-        st.caption(f"Signed in as **{user['name']}**")
-        page=st.radio("Navigation",
+        st.markdown("<div class='brand-pill'>🌱 SMARTFARM</div>", unsafe_allow_html=True)
+        st.markdown("### Farm intelligence")
+        st.caption(f"Welcome back, **{user['name']}**")
+        st.divider()
+        page=st.radio("WORKSPACE",
             ["dashboard","farms","crops","expenses","activities","harvest","reminders","settings"],
-            format_func=lambda x: tr(x), label_visibility="collapsed")
+            format_func=lambda x: {
+                "dashboard":"◫  Overview","farms":"▦  My Farms","crops":"♧  Crop Management",
+                "expenses":"₹  Expenses","activities":"☷  Activities","harvest":"⚖  Harvest & Sales",
+                "reminders":"◷  Reminders","settings":"⚙  Settings"
+            }.get(x,x), label_visibility="visible")
         st.divider()
         language=st.selectbox(tr("language"),["English","తెలుగు"],index=0 if user["language"]=="English" else 1)
         if language != user["language"]:
             update_profile(user["id"],user["name"],language)
             st.session_state.language=language
             st.rerun()
-        if st.button(tr("logout"),use_container_width=True):
+        st.caption("SMARTFARM · FIELD OPERATIONS")
+        if st.button("↪  "+tr("logout"),use_container_width=True):
             for k in ["user_id","user_name"]:
                 st.session_state.pop(k,None)
             st.rerun()
