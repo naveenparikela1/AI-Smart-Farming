@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import folium
+from streamlit_folium import st_folium
 from datetime import date, timedelta
 from database import (
     init_db, authenticate, create_user, get_user, update_profile,
@@ -279,6 +281,53 @@ def login_screen():
                 st.error(tr("bad_login"))
     st.markdown("</div>", unsafe_allow_html=True)
 
+
+def add_satellite_tiles(map_obj):
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+        name="Satellite imagery",
+        overlay=False,
+        control=True,
+    ).add_to(map_obj)
+    folium.LayerControl(collapsed=True).add_to(map_obj)
+    return map_obj
+
+def farm_map(farms, height=460, key="farm_overview_map"):
+    located = [f for f in farms if f.get("latitude") is not None and f.get("longitude") is not None]
+    if not located:
+        st.info("No farm coordinates saved yet. Open **My Farms** and pin a location to see it on the satellite map.")
+        return
+    center = [located[0]["latitude"], located[0]["longitude"]]
+    m = folium.Map(location=center, zoom_start=13, control_scale=True, tiles=None)
+    add_satellite_tiles(m)
+    for farm in located:
+        folium.Marker(
+            [farm["latitude"], farm["longitude"]],
+            tooltip=farm["name"],
+            popup=f"{farm['name']} · {farm['area']:.2f} acres",
+            icon=folium.Icon(color="green", icon="leaf", prefix="fa"),
+        ).add_to(m)
+    st_folium(m, height=height, use_container_width=True, returned_objects=[], key=key)
+
+def farm_location_picker():
+    st.caption("Click the map to pin the centre of your farm. You can zoom in for a more accurate location.")
+    m = folium.Map(location=[17.05, 79.27], zoom_start=11, control_scale=True, tiles=None)
+    add_satellite_tiles(m)
+    picked = st.session_state.get("farm_pick_latlon")
+    if picked:
+        folium.Marker(picked, tooltip="Selected farm location", icon=folium.Icon(color="green", icon="map-pin", prefix="fa")).add_to(m)
+    result = st_folium(m, height=340, use_container_width=True, returned_objects=["last_clicked"], key="farm_location_picker")
+    clicked = result.get("last_clicked") if result else None
+    if clicked:
+        st.session_state["farm_pick_latlon"] = [clicked["lat"], clicked["lng"]]
+    picked = st.session_state.get("farm_pick_latlon")
+    if picked:
+        st.success(f"Selected coordinates: {picked[0]:.6f}, {picked[1]:.6f}")
+    else:
+        st.info("No location selected yet. Click anywhere on the satellite map.")
+    return picked
+
 def farm_options(user_id):
     return list_farms(user_id)
 
@@ -291,7 +340,7 @@ def dashboard(user_id):
     crops = list_crops(user_id)
     expenses = list_expenses(user_id)
     reminders = list_reminders(user_id)
-    st.markdown("<div class='section-kicker'>FARM OVERVIEW · LIVE WORKSPACE</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-kicker'>FARM OVERVIEW · FIELD INTELLIGENCE</div>", unsafe_allow_html=True)
     st.title(f"Good to see you, {st.session_state.user_name} 👋")
     st.markdown("<div class='hero-panel'><div class='section-kicker'>SMART FARMING CONTROL CENTRE</div><h2 style='margin:.45rem 0 .3rem 0'>A clearer view of every acre.</h2><p>Track operations, understand performance and keep your next farm activity on schedule.</p></div>", unsafe_allow_html=True)
 
@@ -330,6 +379,11 @@ def dashboard(user_id):
         else:
             st.info("Add your first crop cycle to start tracking crop progress.")
 
+    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+    st.subheader("🛰️ Satellite farm locations")
+    st.caption("Satellite basemap with saved farm pins. This view shows location imagery, not live crop-health measurements.")
+    farm_map(farms, height=430, key="dashboard_satellite_farms")
+
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
     c1, c2 = st.columns([1,1])
     with c1:
@@ -357,6 +411,8 @@ def dashboard(user_id):
 def farms_page(uid):
     st.title(f"🚜 {tr('farms')}")
     with st.expander(f"➕ {tr('add')} {tr('farms')}", expanded=False):
+        st.markdown("#### Pin your farm on satellite imagery")
+        picked_location = farm_location_picker()
         with st.form("farm_add"):
             c1, c2 = st.columns(2)
             name = c1.text_input(tr("farm_name"))
@@ -366,8 +422,11 @@ def farms_page(uid):
             irrigation = c1.selectbox(tr("irrigation"), ["drip","furrow","sprinkler","rainfed","other"], format_func=lambda x: tr("irr_"+x))
             if st.form_submit_button(tr("save")):
                 if name.strip():
-                    add_farm(uid, name.strip(), village.strip(), area, soil, irrigation)
-                    st.success("Farm saved.")
+                    lat = picked_location[0] if picked_location else None
+                    lon = picked_location[1] if picked_location else None
+                    add_farm(uid, name.strip(), village.strip(), area, soil, irrigation, lat, lon)
+                    st.session_state.pop("farm_pick_latlon", None)
+                    st.success("Farm saved with its map pin." if picked_location else "Farm saved. You can add its map pin later.")
                     st.rerun()
                 st.error(tr("required"))
     rows = list_farms(uid)
@@ -377,6 +436,8 @@ def farms_page(uid):
                 c1, c2 = st.columns([5,1])
                 c1.markdown(f"**{row['name']}** · {row['village'] or '—'}")
                 c1.write(f"{row['area']:.2f} acres · {tr('soil_'+row['soil'])} · {tr('irr_'+row['irrigation'])}")
+                if row.get("latitude") is not None and row.get("longitude") is not None:
+                    c1.caption(f"📍 {row['latitude']:.5f}, {row['longitude']:.5f} · Satellite pin saved")
                 if c2.button(tr("delete"), key=f"farm_del_{row['id']}"):
                     delete_farm(uid, row["id"])
                     st.rerun()
