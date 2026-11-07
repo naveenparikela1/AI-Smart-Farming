@@ -211,7 +211,7 @@ def landing_page():
     st.markdown("## Everything your farm needs, in one place")
     st.markdown("From the first planting record to harvest and sales, keep the important details organised.")
     feature_data = [
-        ("https://images.unsplash.com/photo-1499529112087-3cb3b73 ಕಾಣ?auto=format&fit=crop&w=900&q=80", "Farm management", "Organise farm profiles, land area, soil types and irrigation details."),
+        ("https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=900&q=80", "Farm management", "Organise farm profiles, land area, soil types and irrigation details."),
         ("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80", "Crop tracking", "Track crop cycles, varieties, planting dates and growth stages."),
         ("https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=900&q=80", "Harvest & sales", "Record harvest quantities, buyers, market prices and selling costs."),
     ]
