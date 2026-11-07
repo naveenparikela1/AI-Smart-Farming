@@ -30,6 +30,7 @@ def init_db():
             user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             name TEXT NOT NULL, village TEXT, area REAL NOT NULL CHECK(area > 0),
             soil TEXT NOT NULL, irrigation TEXT NOT NULL,
+            latitude REAL, longitude REAL,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
         CREATE TABLE IF NOT EXISTS crops(
@@ -79,6 +80,12 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_expenses_user ON expenses(user_id);
         CREATE INDEX IF NOT EXISTS idx_reminders_user ON reminders(user_id);
         """)
+        # Backward-compatible migration for existing SQLite databases.
+        farm_columns = {row[1] for row in c.execute("PRAGMA table_info(farms)").fetchall()}
+        if "latitude" not in farm_columns:
+            c.execute("ALTER TABLE farms ADD COLUMN latitude REAL")
+        if "longitude" not in farm_columns:
+            c.execute("ALTER TABLE farms ADD COLUMN longitude REAL")
 
 def _hash(password, salt):
     return hashlib.pbkdf2_hmac("sha256", password.encode(), bytes.fromhex(salt), 240000).hex()
@@ -120,8 +127,9 @@ def _exec(sql,args=()):
 
 def list_farms(uid):
     return _rows("SELECT * FROM farms WHERE user_id=? ORDER BY id DESC",(uid,))
-def add_farm(uid,name,village,area,soil,irrigation):
-    return _exec("INSERT INTO farms(user_id,name,village,area,soil,irrigation) VALUES(?,?,?,?,?,?)",(uid,name,village,area,soil,irrigation))
+def add_farm(uid,name,village,area,soil,irrigation,latitude=None,longitude=None):
+    return _exec("INSERT INTO farms(user_id,name,village,area,soil,irrigation,latitude,longitude) VALUES(?,?,?,?,?,?,?,?)",
+                 (uid,name,village,area,soil,irrigation,latitude,longitude))
 def delete_farm(uid,rid):
     return _exec("DELETE FROM farms WHERE user_id=? AND id=?",(uid,rid))
 
