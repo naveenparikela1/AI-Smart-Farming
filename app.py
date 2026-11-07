@@ -294,7 +294,7 @@ def add_satellite_tiles(map_obj):
     return map_obj
 
 def farm_map(farms, height=460, key="farm_overview_map"):
-    located = [f for f in farms if f.get("latitude") is not None and f.get("longitude") is not None]
+    located = [f for f in farms if f["latitude"] is not None and f["longitude"] is not None]
     if not located:
         st.info("No farm coordinates saved yet. Open **My Farms** and pin a location to see it on the satellite map.")
         return
@@ -436,7 +436,7 @@ def farms_page(uid):
                 c1, c2 = st.columns([5,1])
                 c1.markdown(f"**{row['name']}** · {row['village'] or '—'}")
                 c1.write(f"{row['area']:.2f} acres · {tr('soil_'+row['soil'])} · {tr('irr_'+row['irrigation'])}")
-                if row.get("latitude") is not None and row.get("longitude") is not None:
+                if row["latitude"] is not None and row["longitude"] is not None:
                     c1.caption(f"📍 {row['latitude']:.5f}, {row['longitude']:.5f} · Satellite pin saved")
                 if c2.button(tr("delete"), key=f"farm_del_{row['id']}"):
                     delete_farm(uid, row["id"])
